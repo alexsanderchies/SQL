@@ -1,0 +1,18 @@
+
+EXEC DBMS_UTILITY.compile_schema('DBAMV',FALSE);
+
+EXEC DBMS_UTILITY.compile_schema('DBASGU',FALSE);
+
+EXEC DBMS_UTILITY.compile_schema('DBAPS',FALSE);
+
+EXEC DBMS_UTILITY.compile_schema('MVINTEGRA',FALSE);
+
+EXEC DBMS_UTILITY.compile_schema('PUBLIC',FALSE);
+
+EXEC DBMS_UTILITY.compile_schema('DBAPORTAL',FALSE);
+
+EXEC DBMS_UTILITY.compile_schema('CUSTOM',FALSE);
+
+EXEC DBMS_UTILITY.compile_schema('DBADW',FALSE);
+
+
