@@ -85,7 +85,7 @@ Select DISTINCT Atendime.Cd_Atendimento                                    Par_C
    AND Especialid.Cd_Especialid (+)= Atendime.Cd_Especialid
    AND PRE_MED.CD_ATENDIMENTO = ATENDIME.CD_ATENDIMENTO
    AND PRE_MED.CD_PRE_MED = ITPRE_MED.CD_PRE_MED
-   AND ITPRE_MED.CD_TIP_ESQ = 'PFI'
+   AND ITPRE_MED.CD_TIP_ESQ = 'PFI' -- ESQUEMA DE SOLICITAÇÃO DE FISIO
    AND PRE_MED.DT_VALIDADE > SYSDATE
 ORDER BY Setor.Nm_Setor
         ,leito.ds_leito
@@ -93,7 +93,8 @@ ORDER BY Setor.Nm_Setor
 
 COMMENT ON TABLE dbamv.pw_lista_int_fisio IS 'INT - Paciente internados com procedimentos fisio prescritos'
 /
-
+CREATE OR REPLACE PUBLIC SYNONYM pw_lista_int_fisio FOR dbamv.pw_lista_int_fisio
+/
 COMMENT ON COLUMN dbamv.pw_lista_int_fisio.par_cd_atendimento IS 'Código do atendimento para ser passado a area de prontuário. Esta informação não é exibida na grid'
 /
 COMMENT ON COLUMN dbamv.pw_lista_int_fisio.par_cd_paciente IS 'Código do paciente para ser passado a area de prontuário. Esta informação não é exibida na grid'
