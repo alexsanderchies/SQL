@@ -1,36 +1,38 @@
 --ALTERA FORMATO DA DATA
 ALTER Session SET nls_date_format = 'DD/MM/YYYY HH24:MI'
 
-
 --BUSCA DATA E HORA DO ATENDIMENTO
-SELECT CD_ATENDIMENTO, DT_ATENDIMENTO, HR_ATENDIMENTO, dt_alta, hr_alta,dt_alta_medica
-     ,hr_alta_medica FROM DBAMV.ATENDIME WHERE CD_ATENDIMENTO = 692611
+SELECT ATENDIME.CD_ATENDIMENTO
+      ,ATENDIME.DT_ATENDIMENTO
+      ,ATENDIME.HR_ATENDIMENTO
+      ,ATENDIME.DT_ALTA_MEDICA
+      ,ATENDIME.HR_ALTA_MEDICA 
+      ,ATENDIME.DT_ALTA
+      ,ATENDIME.HR_ALTA
+  FROM DBAMV.ATENDIME 
+  WHERE ATENDIME.CD_ATENDIMENTO = 696676
 
--- UPDATE NA DATA E HORA DA INTERNAÇÃO
+-- UPDATE NA DATA E HORA DA INTERNA??O
 UPDATE ATENDIME
-  SET DT_ATENDIMENTO = '05/06/2022 00:00'  -- Nova Data Atendimento
-     ,HR_ATENDIMENTO = '05/06/2022 22:59'  -- Nova Data e Hora do Atendimento
-  WHERE CD_ATENDIMENTO  = 692611 -- CÓDIGO DO ATENDIMENTO
+  SET DT_ATENDIMENTO = '15/06/2022 00:00'  -- Nova Data Atendimento
+     ,HR_ATENDIMENTO = '15/06/2022 22:59'  -- Nova Data e Hora do Atendimento
+  WHERE CD_ATENDIMENTO  = 696676 -- C?DIGO DO ATENDIMENTO
 
 --
 UPDATE ATENDIME
-  SET dt_alta = '15/05/2024 00:00'  -- Nova Data Atendimento
-     ,hr_alta = '15/05/2024 10:10'  -- Nova Data e Hora do Atendimento
-     ,dt_alta_medica = '15/05/2024 00:00'
-     ,hr_alta_medica = '15/05/2024 10:05'
-  WHERE CD_ATENDIMENTO  = 692611 -- CÓDIGO DO ATENDIMENTO
+  SET dt_alta_medica = '27/05/2024 14:45' -- Nova Data ALTA MÃ‰DICA
+     ,hr_alta_medica = '27/05/2024 14:45' -- Nova Hora ALTA MÃ‰DICA
+     ,dt_alta = '27/05/2024 14:50'  -- Nova Data Atendimento
+     ,hr_alta = '27/05/2024 14:50'  -- Nova Hora Atendimento
+  WHERE CD_ATENDIMENTO  = 696676 -- CÃ“DIGO DO ATENDIMENTO
 
-
-
---BUSCA MOVIMENTAÇÃO DE LEITO
+--BUSCA MOVIMENTA??O DE LEITO
 select  cd_mov_int, dt_mov_int, hr_mov_int,dt_lib_mov, hr_lib_mov
-from dbamv.mov_int where cd_atendimento = 692611
+from dbamv.mov_int where cd_atendimento = 696676
 ORDER BY cd_mov_int
 
-
---ALTERA MOVIMENTAÇÃO DE LEITO
+--ALTERA MOVIMENTA??O DE LEITO
 update dbamv.mov_int
-SET dt_lib_mov = ('15/05/2024 00:00')
-   ,hr_lib_mov = ('15/05/2024 10:10')
-where cd_mov_int = 102382  -- CÓDIGO DA MOVIMENTAÇÃO DE LEITO
-
+SET dt_lib_mov = ('17/05/2024 11:00')
+   ,hr_lib_mov = ('17/05/2024 11:00')
+where cd_mov_int = 103021  -- C?DIGO DA MOVIMENTA??O DE LEITO

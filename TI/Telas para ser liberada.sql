@@ -1,0 +1,1 @@
+SELECT * FROM dbasgu.menu WHERE nm_menu LIKE '%Conta Ext%'
