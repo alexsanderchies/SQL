@@ -1,1 +1,1 @@
-SELECT * FROM dbasgu.menu WHERE nm_menu LIKE '%Conta Ext%'
+SELECT * FROM dbasgu.menu WHERE Upper(MENU.NM_MENU) LIKE Upper('%Conta Ext%')
