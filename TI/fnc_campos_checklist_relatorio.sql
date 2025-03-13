@@ -21,7 +21,7 @@ Cursor cCulturaIdentificada IS
           WHEN CULTURA_IDENTIFICADA_AUSENTE = 'true' THEN 'Identificação de peças anatômicas: Ausente'
           WHEN CULTURA_IDENTIFICADA_N = 'true' THEN 'Identificação de peças anatômicas: Não'
           WHEN CULTURA_IDENTIFICADA_S = 'true' THEN 'Identificação de peças anatômicas: Sim'
-        ELSE 'Identificação de peças anatômicas: NÃO INFORMADO'
+        ELSE 'Identificação de peças anatômicas: NÃO INFORMADO '
         END RESPOSTA
     FROM (
           SELECT dbamv.fnc_editor_retorna_campo(P_CD_DOCUMENTO_CLINICO,'RB_CULTURA_IDENTIFICADA_AUSENTE')     CULTURA_IDENTIFICADA_AUSENTE
