@@ -21,7 +21,7 @@ Cursor cCulturaIdentificada IS
           WHEN CULTURA_IDENTIFICADA_AUSENTE = 'true' THEN 'Identificação de peças anatômicas: Ausente'
           WHEN CULTURA_IDENTIFICADA_N = 'true' THEN 'Identificação de peças anatômicas: Não'
           WHEN CULTURA_IDENTIFICADA_S = 'true' THEN 'Identificação de peças anatômicas: Sim'
-        ELSE 'Identificação de peças anatômicas: NÃO INFORMADO '
+        ELSE 'Identificação de peças anatômicas: NÃO INFORMADO'
         END RESPOSTA
     FROM (
           SELECT dbamv.fnc_editor_retorna_campo(P_CD_DOCUMENTO_CLINICO,'RB_CULTURA_IDENTIFICADA_AUSENTE')     CULTURA_IDENTIFICADA_AUSENTE
@@ -115,22 +115,8 @@ Cursor cTranspAmbulancia IS
           ELSE 'Transporte: NÃO INFORMADO'
           END RESPOSTA
     FROM (
-          SELECT dbamv.Fnc_Editor_Retorna_Historico(P_CD_ATENDIMENTO,
-                                                    'DOCUMENTO',
-                                                    'RB_TRANSP_UTI_COM_MEDICO', --nome do campo
-                                                    'A',
-                                                    'N',
-                                                    1250, --código do documento
-                                                    'AMBOS',
-                                                    'N')TRANSP_UTI_COM_MEDICO
-                ,dbamv.Fnc_Editor_Retorna_Historico(P_CD_ATENDIMENTO,
-                                                    'DOCUMENTO',
-                                                    'RB_TRANSP_AMBULANCIA_BASICA', --nome do campo
-                                                    'A',
-                                                    'N',
-                                                    1250, --código do documento
-                                                    'AMBOS',
-                                                    'N')TRANSP_AMBULANCIA_BASICA
+          SELECT dbamv.fnc_editor_retorna_campo(P_CD_DOCUMENTO_CLINICO,'RB_TRANSP_UTI_COM_MEDICO')      TRANSP_UTI_COM_MEDICO
+                ,dbamv.fnc_editor_retorna_campo(P_CD_DOCUMENTO_CLINICO,'RB_TRANSP_AMBULANCIA_BASICA')   TRANSP_AMBULANCIA_BASICA
           FROM DUAL
         );
 
@@ -142,23 +128,36 @@ Cursor cQuimioterapia IS
           ELSE 'Quimioterapia: NÃO INFORMADO'
           END RESPOSTA
     FROM (
-          SELECT dbamv.Fnc_Editor_Retorna_Historico(P_CD_ATENDIMENTO,
-                                                    'DOCUMENTO',
-                                                    'RB_QUIMIO_S', --nome do campo
-                                                    'A',
-                                                    'N',
-                                                    1250, --código do documento
-                                                    'AMBOS',
-                                                    'N')QUIMIO_S
-                ,dbamv.Fnc_Editor_Retorna_Historico(P_CD_ATENDIMENTO,
-                                                    'DOCUMENTO',
-                                                    'RB_QUIMIO_N', --nome do campo
-                                                    'A',
-                                                    'N',
-                                                    1250, --código do documento
-                                                    'AMBOS',
-                                                    'N')QUIMIO_N
+          SELECT dbamv.fnc_editor_retorna_campo(P_CD_DOCUMENTO_CLINICO,'RB_QUIMIO_S')   QUIMIO_S
+                ,dbamv.fnc_editor_retorna_campo(P_CD_DOCUMENTO_CLINICO,'RB_QUIMIO_N')   QUIMIO_N
           FROM DUAL
+        );
+
+Cursor cIntervFarm IS
+
+  SELECT CASE
+        WHEN INTERV_FARM_N = 'true' AND CD_DOCUMENTO_CLINICO IS NOT NULL THEN 'Continuar com acompanhamento farmacêutico: Não'
+        WHEN INTERV_FARM_S = 'true' AND CD_DOCUMENTO_CLINICO IS NOT NULL THEN 'Continuar com acompanhamento farmacêutico: Sim'
+        WHEN CD_DOCUMENTO_CLINICO IS NULL THEN NULL
+        ELSE 'Continuar com acompanhamento farmacêutico: Não informado'
+      END Resposta
+  FROM (SELECT DBAMV.FNC_EDITOR_RETORNA_CAMPO(PW_DOCUMENTO_CLINICO.CD_DOCUMENTO_CLINICO,'RB_36_INTERV_FARM_N')INTERV_FARM_N
+              ,DBAMV.FNC_EDITOR_RETORNA_CAMPO(PW_DOCUMENTO_CLINICO.CD_DOCUMENTO_CLINICO,'RB_36_INTERV_FARM_S') INTERV_FARM_S
+              ,PW_DOCUMENTO_CLINICO.CD_DOCUMENTO_CLINICO
+          FROM DBAMV.PW_DOCUMENTO_CLINICO
+          JOIN DBASGU.USUARIOS
+            ON PW_DOCUMENTO_CLINICO.CD_USUARIO = USUARIOS.CD_USUARIO
+          WHERE PW_DOCUMENTO_CLINICO.CD_PACIENTE = P_CD_ATENDIMENTO
+            AND (PW_DOCUMENTO_CLINICO.CD_DOCUMENTO_CLINICO, PW_DOCUMENTO_CLINICO.CD_PACIENTE) IN (
+                                                                                                  SELECT Max(PW_DOCUMENTO_CLINICO.CD_DOCUMENTO_CLINICO)
+                                                                                                        ,PW_DOCUMENTO_CLINICO.CD_PACIENTE
+                                                                                                    FROM DBAMV.PW_DOCUMENTO_CLINICO
+                                                                                                    JOIN DBAMV.PW_EDITOR_CLINICO
+                                                                                                      ON PW_DOCUMENTO_CLINICO.CD_DOCUMENTO_CLINICO = PW_EDITOR_CLINICO.CD_DOCUMENTO_CLINICO
+                                                                                                    WHERE PW_EDITOR_CLINICO.CD_DOCUMENTO = 1192
+                                                                                                      AND PW_DOCUMENTO_CLINICO.TP_STATUS IN ('FECHADO','ASSINADO')
+                                                                                                  GROUP BY PW_DOCUMENTO_CLINICO.CD_PACIENTE
+                                                                                                  )
         );
 
 Begin
@@ -216,6 +215,13 @@ open cQuimioterapia;
 fetch cQuimioterapia into Resposta;
 close cQuimioterapia;
 end if;
+
+if P_TIPO_CAMPO = 'INTERVFARM' then
+open cIntervFarm;
+fetch cIntervFarm into Resposta;
+close cIntervFarm;
+end if;
+
 
 Return Trim (Resposta);
 

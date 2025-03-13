@@ -52,6 +52,44 @@ Cursor cEvolProc IS
             )
       WHERE CD_ATENDIMENTO = P_CD_ATENDIMENTO;
 
+Cursor cUltAnamFarm IS
+
+  SELECT PW_DOCUMENTO_CLINICO.NM_DOCUMENTO || ' Por: ' || USUARIOS.NM_USUARIO || ' Em: ' || To_Char(PW_DOCUMENTO_CLINICO.DH_CRIACAO,'DD/MM/RRRR HH24:MI') EVOL
+    FROM DBAMV.PW_DOCUMENTO_CLINICO
+    JOIN DBASGU.USUARIOS
+      ON PW_DOCUMENTO_CLINICO.CD_USUARIO = USUARIOS.CD_USUARIO
+    WHERE PW_DOCUMENTO_CLINICO.CD_PACIENTE = P_CD_ATENDIMENTO
+      AND (PW_DOCUMENTO_CLINICO.CD_DOCUMENTO_CLINICO, PW_DOCUMENTO_CLINICO.CD_PACIENTE) IN (
+                                                                                            SELECT Max(PW_DOCUMENTO_CLINICO.CD_DOCUMENTO_CLINICO)
+                                                                                                  ,PW_DOCUMENTO_CLINICO.CD_PACIENTE
+                                                                                              FROM DBAMV.PW_DOCUMENTO_CLINICO
+                                                                                              JOIN DBAMV.PW_EDITOR_CLINICO
+                                                                                                ON PW_DOCUMENTO_CLINICO.CD_DOCUMENTO_CLINICO = PW_EDITOR_CLINICO.CD_DOCUMENTO_CLINICO
+                                                                                              WHERE PW_EDITOR_CLINICO.CD_DOCUMENTO = 1184
+                                                                                                AND PW_DOCUMENTO_CLINICO.TP_STATUS IN ('FECHADO','ASSINADO')
+                                                                                            GROUP BY PW_DOCUMENTO_CLINICO.CD_PACIENTE
+                                                                                            );
+
+Cursor cUltEvolFarm IS
+
+  SELECT PW_DOCUMENTO_CLINICO.NM_DOCUMENTO || ' Por: ' || USUARIOS.NM_USUARIO || ' Em: ' || To_Char(PW_DOCUMENTO_CLINICO.DH_CRIACAO,'DD/MM/RRRR HH24:MI') EVOL
+    FROM DBAMV.PW_DOCUMENTO_CLINICO
+    JOIN DBASGU.USUARIOS
+      ON PW_DOCUMENTO_CLINICO.CD_USUARIO = USUARIOS.CD_USUARIO
+    WHERE PW_DOCUMENTO_CLINICO.CD_PACIENTE = P_CD_ATENDIMENTO
+      AND (PW_DOCUMENTO_CLINICO.CD_DOCUMENTO_CLINICO, PW_DOCUMENTO_CLINICO.CD_PACIENTE) IN (
+                                                                                            SELECT Max(PW_DOCUMENTO_CLINICO.CD_DOCUMENTO_CLINICO)
+                                                                                                  ,PW_DOCUMENTO_CLINICO.CD_PACIENTE
+                                                                                              FROM DBAMV.PW_DOCUMENTO_CLINICO
+                                                                                              JOIN DBAMV.PW_EDITOR_CLINICO
+                                                                                                ON PW_DOCUMENTO_CLINICO.CD_DOCUMENTO_CLINICO = PW_EDITOR_CLINICO.CD_DOCUMENTO_CLINICO
+                                                                                              WHERE PW_EDITOR_CLINICO.CD_DOCUMENTO = 1192
+                                                                                                AND PW_DOCUMENTO_CLINICO.TP_STATUS IN ('FECHADO','ASSINADO')
+                                                                                            GROUP BY PW_DOCUMENTO_CLINICO.CD_PACIENTE
+                                                                                            );
+
+
+
 BEGIN
 
 if P_TIPO_DOC = 'EVOLENF' then
@@ -66,8 +104,19 @@ fetch cEvolProc into EVOL;
 close cEvolProc;
 end if;
 
+if P_TIPO_DOC = 'ULTANAMFARM' then
+open cUltAnamFarm;
+fetch cUltAnamFarm into EVOL;
+close cUltAnamFarm;
+end if;
 
-Return EVOL;
+if P_TIPO_DOC = 'ULTEVOLFARM' then
+open cUltEvolFarm;
+fetch cUltEvolFarm into EVOL;
+close cUltEvolFarm;
+end if;
+
+Return Trim(EVOL);
 
 Exception
    When no_data_found then
