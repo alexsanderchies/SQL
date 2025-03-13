@@ -1,0 +1,17 @@
+UPDATE DBAMV.PLANO_ESTR 
+  SET PLANO_ESTR.TP_CONTA = 'A' 
+  WHERE PLANO_ESTR.CD_REDUZIDO IN (SELECT CD_REDUZIDO
+                                      FROM dbamv.plano_estr 
+                                      WHERE cd_plano = 'PLANO2'
+                                        and length(CD_CONTABIL) - length(replace(CD_CONTABIL, '.', null)) = 5 --ESTRUTURAL NIVEL 5
+                                        AND TP_CONTA = 'S'
+                                        AND cd_contabil NOT IN (SELECT substr(CD_CONTABIL, 0, 16) estrutura
+                                                                  FROM dbamv.plano_estr 
+                                                                  WHERE cd_plano = 'PLANO2'
+                                                                    and length(CD_CONTABIL) - length(replace(CD_CONTABIL, '.', null))  = 6   --ESTRUTURAL NIVEL 6
+                                                                )  
+                                  )
+-- estrutural com 5 pontos deve alterar o tp_conta para A se nao tiver registros filhos  com 6 pontos
+
+ 
+

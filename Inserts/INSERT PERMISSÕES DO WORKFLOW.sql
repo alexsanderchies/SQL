@@ -1,0 +1,42 @@
+-- insere na tela M_CONFIG_WORKFLOW_USUARIO aba FASES
+INSERT INTO DBAMV.CONFIG_WORKFLOW_USU_PERMISSAO
+SELECT NR_ORDEM
+      ,CD_USUARIO
+      ,TP_PROCESSO
+      ,CD_MULTI_EMPRESA
+  FROM DBAMV.FSCC_CONFIG_WORKFLOW
+      ,DBASGU.USUARIOS
+  WHERE USUARIOS.CD_USUARIO IN ('HC4965','HC3363','HC3650')  -- USUÁRIOS QUE PRECISAM SER INSERIDOS, SEPARADO POR VIRGULA E ENTRE ASPAS SIMPLES
+    AND FSCC_CONFIG_WORKFLOW.SN_ATIVO = 'S'
+    AND (CD_USUARIO, TP_PROCESSO) NOT IN (SELECT CD_USUARIO, TP_PROCESSO FROM CONFIG_WORKFLOW_USU_PERMISSAO)
+
+-- insere na tela M_CONFIG_WORKFLOW_USUARIO aba FUNCIONALIDADES
+INSERT INTO DBAMV.FSCC_CONFIG_FUNCIONALIDADE_USU
+SELECT FSCC_CONFIG_FUNCIONALIDADE.TP_FUNCIONALIDADE     tp_funcionalidade
+      ,USUARIOS.CD_USUARIO                              cd_usuario
+      ,1                                                cd_multi_empresa
+  FROM dbamv.FSCC_CONFIG_FUNCIONALIDADE
+      ,dbasgu.usuarios
+  WHERE USUARIOS.CD_USUARIO IN ('HC4965','HC3363','HC3650')-- USUÁRIOS QUE PRECISAM SER INSERIDOS, SEPARADO POR VIRGULA E ENTRE ASPAS SIMPLES
+    AND (CD_USUARIO, TP_FUNCIONALIDADE) NOT IN (SELECT CD_USUARIO, TP_FUNCIONALIDADE FROM FSCC_CONFIG_FUNCIONALIDADE_USU)
+
+
+--insere na tela M_CONFIG_WORKFLOW
+INSERT INTO DBAMV.FSCC_CONFIG_WORKFLOW_USUARIO
+SELECT FSCC_CONFIG_WORKFLOW.NR_ORDEM                    nr_ordem_workflow
+      ,USUARIOS.CD_USUARIO                              cd_usuario
+      ,'N'                                              sn_recebe_sms
+      ,'S'                                              sn_recebe_email
+      ,'S'                                              sn_inicio_verde
+      ,'S'                                              sn_inicio_amarelo
+      ,'S'                                              sn_inicio_vermelho
+      ,1                                                cd_multi_empresa
+      ,FSCC_CONFIG_WORKFLOW.TP_PROCESSO                 tp_processo
+  FROM DBAMV.FSCC_CONFIG_WORKFLOW
+      ,DBASGU.USUARIOS
+  WHERE USUARIOS.CD_USUARIO IN ('HC4965','HC3363','HC3650')-- USUÁRIOS QUE PRECISAM SER INSERIDOS, SEPARADO POR VIRGULA E ENTRE ASPAS SIMPLES
+    AND (CD_USUARIO, TP_PROCESSO) NOT IN (SELECT CD_USUARIO, TP_PROCESSO FROM FSCC_CONFIG_WORKFLOW_USUARIO )
+
+
+
+
