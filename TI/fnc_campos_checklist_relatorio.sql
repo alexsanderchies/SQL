@@ -160,6 +160,14 @@ Cursor cIntervFarm IS
                                                                                                   )
         );
 
+CURSOR cTratPreMed IS
+
+  SELECT listagg(DISTINCT TRATAMENTO.NM_PROTOCOLO, CHR(10)) within group (order by TRATAMENTO.CD_PACIENTE) Resposta
+    FROM DBAMV.TRATAMENTO
+    WHERE TRATAMENTO.CD_PACIENTE = P_CD_ATENDIMENTO
+      AND TRATAMENTO.SN_ATIVO = 'S';
+
+
 Begin
 
 if P_TIPO_CAMPO = 'INTERCORRENCIA' then
@@ -220,6 +228,12 @@ if P_TIPO_CAMPO = 'INTERVFARM' then
 open cIntervFarm;
 fetch cIntervFarm into Resposta;
 close cIntervFarm;
+end if;
+
+if P_TIPO_CAMPO = 'TRATPREMED' then
+open cTratPreMed;
+fetch cTratPreMed into Resposta;
+close cTratPreMed;
 end if;
 
 
