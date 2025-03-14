@@ -136,11 +136,11 @@ Cursor cQuimioterapia IS
 Cursor cIntervFarm IS
 
   SELECT CASE
-        WHEN INTERV_FARM_N = 'true' AND CD_DOCUMENTO_CLINICO IS NOT NULL THEN 'Continuar com acompanhamento farmacêutico: Não'
-        WHEN INTERV_FARM_S = 'true' AND CD_DOCUMENTO_CLINICO IS NOT NULL THEN 'Continuar com acompanhamento farmacêutico: Sim'
-        WHEN CD_DOCUMENTO_CLINICO IS NULL THEN NULL
-        ELSE 'Continuar com acompanhamento farmacêutico: Não informado'
-      END Resposta
+            WHEN INTERV_FARM_N = 'true' AND CD_DOCUMENTO_CLINICO IS NOT NULL THEN 'Continuar com acompanhamento farmacêutico: Não'
+            WHEN INTERV_FARM_S = 'true' AND CD_DOCUMENTO_CLINICO IS NOT NULL THEN 'Continuar com acompanhamento farmacêutico: Sim'
+            WHEN CD_DOCUMENTO_CLINICO IS NULL THEN NULL
+            ELSE 'Continuar com acompanhamento farmacêutico: Não informado'
+          END Resposta
   FROM (SELECT DBAMV.FNC_EDITOR_RETORNA_CAMPO(PW_DOCUMENTO_CLINICO.CD_DOCUMENTO_CLINICO,'RB_36_INTERV_FARM_N')INTERV_FARM_N
               ,DBAMV.FNC_EDITOR_RETORNA_CAMPO(PW_DOCUMENTO_CLINICO.CD_DOCUMENTO_CLINICO,'RB_36_INTERV_FARM_S') INTERV_FARM_S
               ,PW_DOCUMENTO_CLINICO.CD_DOCUMENTO_CLINICO
@@ -167,6 +167,108 @@ CURSOR cTratPreMed IS
     WHERE TRATAMENTO.CD_PACIENTE = P_CD_ATENDIMENTO
       AND TRATAMENTO.SN_ATIVO = 'S';
 
+CURSOR cCondutasFarm IS 
+  SELECT listagg(CONDUTAS_1, CHR(10)) RESPOSTA   
+    FROM (
+          SELECT CASE 
+                    WHEN CONDUTAS_1 = 'true' THEN 'Oriento paciente e/ou acompanhante sobre o(s) medicamentos e posologia correta'
+                  ELSE NULL
+                  END CONDUTAS_1
+            FROM (SELECT DBAMV.FNC_EDITOR_RETORNA_CAMPO(P_CD_DOCUMENTO_CLINICO,'SN_37_CONDUTAS_1')CONDUTAS_1 FROM dual)
+          UNION 
+          SELECT CASE 
+                    WHEN CONDUTAS_2 = 'true' THEN 'Entrego ao paciente e/ou acompanhante a prescrição farmacêutica com orientações sobre o(s) medicamento(s) e realizo a validação do entendimento das orientações repassadas'
+                  ELSE NULL
+                  END CONDUTAS_1
+            FROM (SELECT DBAMV.FNC_EDITOR_RETORNA_CAMPO(P_CD_DOCUMENTO_CLINICO,'SN_37_CONDUTAS_2')CONDUTAS_2 FROM dual) 
+          UNION
+          SELECT CASE 
+                    WHEN CONDUTAS_3 = 'true' THEN 'Solicito o médico oncologista avaliação das interação(es) encontrada(s)'
+                  ELSE NULL
+                  END CONDUTAS_1
+            FROM (SELECT DBAMV.FNC_EDITOR_RETORNA_CAMPO(P_CD_DOCUMENTO_CLINICO,'SN_37_CONDUTAS_3')CONDUTAS_3 FROM dual) 
+          UNION
+          SELECT CASE 
+                    WHEN CONDUTAS_4 = 'true' THEN 'Envio carta ao médico prescritor solicitando adequação do medicamento avaliado ao tratamento oncológico'
+                  ELSE NULL
+                  END CONDUTAS_1
+            FROM (SELECT DBAMV.FNC_EDITOR_RETORNA_CAMPO(P_CD_DOCUMENTO_CLINICO,'SN_37_CONDUTAS_4')CONDUTAS_4 FROM dual) 
+          UNION
+          SELECT CASE 
+                    WHEN CONDUTAS_5 = 'true' THEN 'Encaminho para equipe multidisciplinar'
+                  ELSE NULL
+                  END CONDUTAS_1
+            FROM (SELECT DBAMV.FNC_EDITOR_RETORNA_CAMPO(P_CD_DOCUMENTO_CLINICO,'SN_37_CONDUTAS_5')CONDUTAS_5 FROM dual) 
+          UNION
+          SELECT CASE 
+                    WHEN CONDUTAS_6 = 'true' THEN 'Informado ao médico sobre a duplicidade do medicamento e sugestão de suspensão de medicamento'
+                  ELSE NULL
+                  END CONDUTAS_1
+            FROM (SELECT DBAMV.FNC_EDITOR_RETORNA_CAMPO(P_CD_DOCUMENTO_CLINICO,'SN_37_CONDUTAS_6')CONDUTAS_6 FROM dual) 
+          UNION
+          SELECT CASE 
+                    WHEN CONDUTAS_7 = 'true' THEN 'Solicito ao médico oncologista a avaliação sobre as divergência(s) / erro(s) encontrados na prescrição'
+                  ELSE NULL
+                  END CONDUTAS_1
+            FROM (SELECT DBAMV.FNC_EDITOR_RETORNA_CAMPO(P_CD_DOCUMENTO_CLINICO,'SN_37_CONDUTAS_7')CONDUTAS_7 FROM dual) 
+          UNION
+          SELECT CASE 
+                    WHEN CONDUTAS_8 = 'true' THEN 'Sugiro inclusão de novo medicamento'
+                  ELSE NULL
+                  END CONDUTAS_1
+            FROM (SELECT DBAMV.FNC_EDITOR_RETORNA_CAMPO(P_CD_DOCUMENTO_CLINICO,'SN_37_CONDUTAS_8')CONDUTAS_8 FROM dual) 
+          UNION
+          SELECT CASE 
+                    WHEN CONDUTAS_9 = 'true' THEN 'Sugiro substituição do medicamento'
+                  ELSE NULL
+                  END CONDUTAS_1
+            FROM (SELECT DBAMV.FNC_EDITOR_RETORNA_CAMPO(P_CD_DOCUMENTO_CLINICO,'SN_37_CONDUTAS_9')CONDUTAS_9 FROM dual) 
+          UNION
+          SELECT CASE 
+                    WHEN CONDUTAS_10 = 'true' THEN 'Sugiro alteração da forma farmacêutica'
+                  ELSE NULL
+                  END CONDUTAS_1
+            FROM (SELECT DBAMV.FNC_EDITOR_RETORNA_CAMPO(P_CD_DOCUMENTO_CLINICO,'SN_37_CONDUTAS_10')CONDUTAS_10 FROM dual) 
+          UNION
+          SELECT CASE 
+                    WHEN CONDUTAS_11 = 'true' THEN 'Sugiro alteração na frequência de administração, sem alteração de dose'
+                  ELSE NULL
+                  END CONDUTAS_1
+            FROM (SELECT DBAMV.FNC_EDITOR_RETORNA_CAMPO(P_CD_DOCUMENTO_CLINICO,'SN_37_CONDUTAS_11')CONDUTAS_11 FROM dual) 
+          UNION
+          SELECT CASE 
+                    WHEN CONDUTAS_12 = 'true' THEN 'Sugiro alteração no horário de administração, sem alteração de dose'
+                  ELSE NULL
+                  END CONDUTAS_1
+            FROM (SELECT DBAMV.FNC_EDITOR_RETORNA_CAMPO(P_CD_DOCUMENTO_CLINICO,'SN_37_CONDUTAS_12')CONDUTAS_12 FROM dual) 
+          UNION
+          SELECT CASE 
+                    WHEN CONDUTAS_13 = 'true' THEN 'Sugiro alteração de via de administração'
+                  ELSE NULL
+                  END CONDUTAS_1
+            FROM (SELECT DBAMV.FNC_EDITOR_RETORNA_CAMPO(P_CD_DOCUMENTO_CLINICO,'SN_37_CONDUTAS_13')CONDUTAS_13 FROM dual) 
+          UNION
+          SELECT CASE 
+                    WHEN CONDUTAS_14 = 'true' THEN 'Sugiro aumento de dose do medicamento'
+                  ELSE NULL
+                  END CONDUTAS_1
+            FROM (SELECT DBAMV.FNC_EDITOR_RETORNA_CAMPO(P_CD_DOCUMENTO_CLINICO,'SN_37_CONDUTAS_14')CONDUTAS_14 FROM dual) 
+          UNION
+          SELECT CASE 
+                    WHEN CONDUTAS_15 = 'true' THEN 'Sugiro redução de dose do medicamento'
+                  ELSE NULL
+                  END CONDUTAS_1
+            FROM (SELECT DBAMV.FNC_EDITOR_RETORNA_CAMPO(P_CD_DOCUMENTO_CLINICO,'SN_37_CONDUTAS_15')CONDUTAS_15 FROM dual) 
+          UNION
+          SELECT CASE 
+                    WHEN CONDUTAS_16 = 'true' THEN 'Sugiro suspensão de planta medicinal'
+                  ELSE NULL
+                  END CONDUTAS_1
+            FROM (SELECT DBAMV.FNC_EDITOR_RETORNA_CAMPO(P_CD_DOCUMENTO_CLINICO,'SN_37_CONDUTAS_16')CONDUTAS_16 FROM dual) 
+          UNION 
+          SELECT DBAMV.FNC_EDITOR_RETORNA_CAMPO(P_CD_DOCUMENTO_CLINICO,'DS_37_CONDUTAS_17')CONDUTAS_17  FROM dual 
+          )
+  WHERE CONDUTAS_1 IS NOT NULL; 
 
 Begin
 
@@ -236,6 +338,11 @@ fetch cTratPreMed into Resposta;
 close cTratPreMed;
 end if;
 
+if P_TIPO_CAMPO = 'CONDUTASFARM' then
+open cCondutasFarm;
+fetch cCondutasFarm into Resposta;
+close cCondutasFarm;
+end if;
 
 Return Trim (Resposta);
 
